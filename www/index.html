@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Palmasoft Movil</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link rel="stylesheet" href="css/jquery.mobile-1.4.5.min.css">
+	<link rel="stylesheet" href="css/estilos.css">
+
+	<script src="js/jquery-1.11.1.min.js"></script>
+	<script src="js/jquery.mobile-1.4.5.min.js"></script>
+	<script href="js/scripts.js"></script>
+</head>
+<body>
+<div data-role="page" id="login">
+	<div data-role="header">
+		<h1>Palmasoft Movil</h1>
+	</div><!-- /header -->
+	<div role="main" class="ui-content">
+		<h3>Iniciar sesión</h3>
+		<label for="txt-email">Usuario</label>
+		<input type="text" name="txt-email" id="txt-email">
+		<label for="txt-password">Contraseña</label>
+		<input type="password" name="txt-password" id="txt-password">
+		<br>
+		<a href="#dashBoard" data-rel="page" data-transition="pop" data-position-to="window" id="btn-submit" class="ui-btn ui-corner-all mc-top-margin-1-5">Entrar</a>
+		<div data-role="popup" id="dlg-invalid-credentials" data-dismissible="false" style="max-width:400px;">
+			<div role="main" class="ui-content">
+				<h3 class="mc-text-danger">Login Failed</h3>
+				<p>Did you enter the right credentials?</p>
+				<div class="mc-text-center"><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-b mc-top-margin-1-5">OK</a></div>
+			</div>
+		</div>
+	</div>
+</div>
+<div data-role="page" id="dashBoard">
+	<div data-role="navbar" data-iconpos="left">
+		<ul>
+			<li><a href="#addRow" data-rel="page" data-icon="plus">Nuevo</a></li>
+			<li><a href="javascript:;" data-icon="delete">Salir</a></li>
+		</ul>
+	</div>
+</div>
+<div data-role="page" id="addRow">
+	<div data-role="navbar" data-iconpos="left">
+		<ul>
+			<li><a href="" data-rel="page" data-icon="check">Guardar</a></li>
+			<li><a href="" data-rel="page" data-icon="action">Adicionar</a></li>
+			<li><a href="#dashBoard" data-rel="page" data-icon="grid">Lista</a></li>
+		</ul>
+	</div>
+	<div data-role="content">
+		<div class="ui-grid-a">
+			<label for="name">Fecha:</label>
+			<div class="ui-block-a">
+				<div data-role="fieldcontain">
+					<input type="date" name="fecha" placeholder="Fecha"  />
+				</div>
+			</div>
+			<div class="ui-block-b">
+				<div data-role="fieldcontain">
+					<input type="time" name="hora" placeholder="Hora"  />
+				</div>
+			</div>
+		</div>
+		<div data-role="fieldcontain">
+			<input type="text" name="lote" placeholder="Lote" maxlength="5"  />
+		</div>
+		<div data-role="fieldcontain">
+			<input type="number" name="linea" placeholder="Linea" />
+		</div>
+		<div data-role="fieldcontain">
+			<input type="number" name="palma" placeholder="Palma" />
+		</div>
+		<div data-role="fieldcontain">
+			<select name="plaga">
+				<option value="">Plaga</option>
+				<option value="op">Opcion 1</option>
+			</select>
+		</div>
+		<div data-role="fieldcontain">
+			<select name="presentacion">
+				<option value="">Presentacion</option>
+				<option value="op">Opcion 1</option>
+			</select>
+		</div>
+		<div data-role="fieldcontain">
+			<input type="number" name="cantidad" placeholder="Cantidad" />
+		</div>
+		<div data-role="fieldcontain">
+			<input type="submit" name="enviar" value="Enviar" />
+		</div>
+	</div>
+</div>
+</body>
+</html>
