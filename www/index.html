@@ -10,7 +10,10 @@
 
 	<script src="js/jquery-1.11.1.min.js"></script>
 	<script src="js/jquery.mobile-1.4.5.min.js"></script>
-	<script href="js/scripts.js"></script>
+	<script src="js/jquery.validate.min.js"></script>
+	<script src="js/localization/messages_es.js"></script>
+    <script src="cordova.js"></script>
+	<script src="js/scripts.js"></script>
 </head>
 <body>
 <div data-role="page" id="login">
@@ -20,15 +23,16 @@
 	<div role="main" class="ui-content">
 		<h3>Iniciar sesión</h3>
 		<label for="txt-email">Usuario</label>
-		<input type="text" name="txt-email" id="txt-email">
+		<input type="text" name="txtUser" id="txtUser">
 		<label for="txt-password">Contraseña</label>
-		<input type="password" name="txt-password" id="txt-password">
+		<input type="password" name="txtPassword" id="txtPassword">
 		<br>
-		<a href="#dashBoard" data-rel="page" data-transition="pop" data-position-to="window" id="btn-submit" class="ui-btn ui-corner-all mc-top-margin-1-5">Entrar</a>
+		<a href="javascript:;" id="btnSubmitLogin" class="ui-btn ui-corner-all mc-top-margin-1-5">Entrar</a>
 		<div data-role="popup" id="dlg-invalid-credentials" data-dismissible="false" style="max-width:400px;">
 			<div role="main" class="ui-content">
-				<h3 class="mc-text-danger">Login Failed</h3>
-				<p>Did you enter the right credentials?</p>
+				<h3 class="mc-text-danger">Fallo</h3>
+				<p>Usuario y/o Contraseña incorrectos</p>
+				<br>
 				<div class="mc-text-center"><a href="#" data-rel="back" class="ui-btn ui-corner-all ui-shadow ui-btn-b mc-top-margin-1-5">OK</a></div>
 			</div>
 		</div>
@@ -38,7 +42,7 @@
 	<div data-role="navbar" data-iconpos="left">
 		<ul>
 			<li><a href="#addRow" data-rel="page" data-icon="plus">Nuevo</a></li>
-			<li><a href="javascript:;" data-icon="delete">Salir</a></li>
+			<li><a href="javascript:;" data-icon="delete" id="btnSalir">Salir</a></li>
 		</ul>
 	</div>
 </div>
@@ -51,46 +55,47 @@
 		</ul>
 	</div>
 	<div data-role="content">
-		<div class="ui-grid-a">
-			<label for="name">Fecha:</label>
-			<div class="ui-block-a">
-				<div data-role="fieldcontain">
-					<input type="date" name="fecha" placeholder="Fecha"  />
+		<form action="" id="formAddRow">
+			<div class="ui-grid-a">
+				<label for="name">Fecha:</label>
+				<div class="ui-block-a">
+					<div data-role="fieldcontain">
+						<input type="date" name="fecha" placeholder="Fecha"  required>
+					</div>
+				</div>
+				<div class="ui-block-b">
+					<div data-role="fieldcontain">
+						<input type="time" name="hora" placeholder="Hora"  required>
+					</div>
 				</div>
 			</div>
-			<div class="ui-block-b">
-				<div data-role="fieldcontain">
-					<input type="time" name="hora" placeholder="Hora"  />
-				</div>
+			<div data-role="fieldcontain">
+				<input type="text" name="bloque" placeholder="Bloque" maxlength="5"  required>
 			</div>
-		</div>
-		<div data-role="fieldcontain">
-			<input type="text" name="lote" placeholder="Lote" maxlength="5"  />
-		</div>
-		<div data-role="fieldcontain">
-			<input type="number" name="linea" placeholder="Linea" />
-		</div>
-		<div data-role="fieldcontain">
-			<input type="number" name="palma" placeholder="Palma" />
-		</div>
-		<div data-role="fieldcontain">
-			<select name="plaga">
-				<option value="">Plaga</option>
-				<option value="op">Opcion 1</option>
-			</select>
-		</div>
-		<div data-role="fieldcontain">
-			<select name="presentacion">
-				<option value="">Presentacion</option>
-				<option value="op">Opcion 1</option>
-			</select>
-		</div>
-		<div data-role="fieldcontain">
-			<input type="number" name="cantidad" placeholder="Cantidad" />
-		</div>
-		<div data-role="fieldcontain">
-			<input type="submit" name="enviar" value="Enviar" />
-		</div>
+			<div data-role="fieldcontain">
+				<input type="text" name="lote" placeholder="Lote" maxlength="5"  required>
+			</div>
+			<div data-role="fieldcontain">
+				<input type="number" name="linea" placeholder="Linea" required>
+			</div>
+			<div data-role="fieldcontain">
+				<input type="number" name="palma" placeholder="Palma" required>
+			</div>
+			<div data-role="fieldcontain">
+				<select name="plaga" id="ddPlaga"></select>
+			</div>
+			<div data-role="fieldcontain">
+				<select name="presentacion" id="ddPresentacion">
+					<option value="">Presentacion</option>
+				</select>
+			</div>
+			<div data-role="fieldcontain">
+				<input type="number" name="cantidad" placeholder="Cantidad" required>
+			</div>
+			<div data-role="fieldcontain">
+				<input type="submit" name="enviar" value="Enviar" required>
+			</div>
+		</form>
 	</div>
 </div>
 </body>
