@@ -10,7 +10,7 @@ function onDeviceReady(){
 	var db = window.sqlitePlugin.openDatabase({name: "palmasoftMovil.db"});
 
 
-	db.executeSql("pragma table_info (TblLINEAS);", [], function(res) {
+	db.executeSql("pragma table_info (TblRowData);", [], function(res) {
 		if(res.rows.length == 0){
 			db.transaction(function(tx){
 				tx.executeSql('DROP TABLE IF EXISTS usuarios');
@@ -81,12 +81,54 @@ function onDeviceReady(){
 				tx.executeSql('INSERT INTO TblLINEAS(LINEA, CodLote, CodBloque, PALMAS) VALUES(4, "1","105",23)');
 				tx.executeSql('INSERT INTO TblLINEAS(LINEA, CodLote, CodBloque, PALMAS) VALUES(5, "1","105",23)');
 				tx.executeSql('INSERT INTO TblLINEAS(LINEA, CodLote, CodBloque, PALMAS) VALUES(6, "1","105",23)');
+
+				tx.executeSql('DROP TABLE IF EXISTS TblRowData');
+				tx.executeSql('CREATE TABLE TblRowData(`Id` INTEGER NOT NULL PRIMARY KEY, `fecha` DATETIME NOT NULL, `CodBloque` varchar(5) NOT NULL, `CodLote` varchar(3) NOT NULL, `LINEA` INT NOT NULL, `PALMAS` INT NOT NULL, `CodigoPlaga` INT NOT NULL, `IdPres` INT NOT NULL, `cantidad` INT NOT NULL)');
 			}, function(e) {
 				alert("ERROR: " + e.message);
 			});
 		}
 	});
 
+	function renderDashboard(){
+		var rows = [];
+		db.transaction(function(tx){
+			tx.executeSql("SELECT * FROM TblRowData;", [], function(tx, res) {
+				for(var i=0; i<res.rows.length; i++){
+					var fecha = new Date(res.rows.item(i).fecha);
+					rows.push("<li id='" + res.rows.item(i).Id + "'><a href='javasript:;'><p>Bloque: " + res.rows.item(i).CodBloque + " Fecha: "+fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+fecha.getFullYear()+" "+fecha.getHours()+":"+fecha.getMinutes()+"</p></a></li>");
+				}
+
+				$('#rowList').html(rows);
+
+				$('#rowList li').click(function(){
+					alert($(this).attr('id'));
+					renderRowDetail($(this).attr('id'));
+				});
+
+				$('#rowList').listview('refresh');
+			});		
+		});
+	}
+
+	function renderRowDetail(Id){
+		db.transaction(function(tx){
+			tx.executeSql("SELECT * FROM TblRowData WHERE Id ="+Id, [], function(tx, res) {
+				$('#dataRow .fecha span').html(res.rows.item(0).fecha);
+				$('#dataRow .CodBloque span').html(res.rows.item(0).CodBloque);
+				$('#dataRow .CodLote span').html(res.rows.item(0).CodLote);
+				$('#dataRow .LINEA span').html(res.rows.item(0).LINEA);
+				$('#dataRow .PALMAS span').html(res.rows.item(0).PALMAS);
+				$('#dataRow .CodigoPlaga span').html(res.rows.item(0).CodigoPlaga);
+				$('#dataRow .IdPres span').html(res.rows.item(0).IdPres);
+				$('#dataRow .cantidad span').html(res.rows.item(0).cantidad);
+
+				$.mobile.changePage('#rowDetail');
+			});
+		}, function(e) {
+			alert("ERROR: " + e.message);
+		});
+	}
 
 	function renderAddRow(){
 		db.transaction(function(tx){
@@ -102,13 +144,27 @@ function onDeviceReady(){
 					optStr += '<option value="'+res.rows.item(i).Codigo+'">'+res.rows.item(i).Nombre+'</option>';
 				}
 
-				$('#ddPlaga').html(optStr);
+				$('#CodigoPlaga').html(optStr);
+			});		
+		});
+	}
+
+
+	function insertNewRow(){
+		var fecha = new Date($('#fecha').val()+'T'+$('#hora').val());
+
+		db.transaction(function(tx){
+			tx.executeSql('INSERT INTO TblRowData(fecha, CodBloque, CodLote, LINEA, PALMAS, CodigoPlaga, IdPres, Cantidad) VALUES("'+fecha+'", "'+$('#CodBloque').val()+'", "'+$('#CodLote').val()+'", "'+$('#LINEA').val()+'", "'+$('#PALMAS').val()+'", "'+$('#CodigoPlaga').val()+'", "'+$('#IdPres').val()+'", "'+$('#Cantidad').val()+'")', [], function(tx, res) {
+				renderDashboard();
+				$.mobile.changePage('#dashBoard');
+				$('#formAddRow').trigger("reset");
 			});		
 		});
 	}
 
 
 	$(document).ready(function(){
+		renderDashboard();
 		renderAddRow();
 
 		db.transaction(function(tx) {
@@ -198,7 +254,13 @@ function onDeviceReady(){
 					palmaValid: true
 				}
 			},
-			debug: true
+			submitHandler: function(form) {
+				insertNewRow();
+			}
+		});
+
+		$('#btnGuardar').click(function(){
+			$('#formAddRow').submit();
 		});
 
 		$('#btnSalir').click(function(){
@@ -223,7 +285,7 @@ function onDeviceReady(){
 			});
 		});
 
-		$('#ddPlaga').change(function(){
+		$('#CodigoPlaga').change(function(){
 			if($(this).val() != ''){
 				var ddValue = $(this).val();
 
@@ -234,11 +296,11 @@ function onDeviceReady(){
 							optStr += '<option value="'+res.rows.item(i).IdPres+'">'+res.rows.item(i).Presentacion+'</option>';
 						}
 
-						$('#ddPresentacion').html(optStr);
+						$('#IdPres').html(optStr);
 					});
 				});
 			}else{
-				$('#ddPresentacion').html('<option value="">Presentacion</option>');
+				$('#IdPres').html('<option value="">Presentacion</option>');
 			}
 		});
 	});
