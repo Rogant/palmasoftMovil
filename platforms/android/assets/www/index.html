@@ -45,12 +45,37 @@
 			<li><a href="javascript:;" data-icon="delete" id="btnSalir">Salir</a></li>
 		</ul>
 	</div>
+	<div data-role="content">
+		<ul id="rowList" data-role="listview">
+		</ul>
+	</div>
+</div>
+<div data-role="page" id="rowDetail">
+	<div data-role="navbar" data-iconpos="left">
+		<ul>
+			<li><a href="#addRow" data-rel="page" data-icon="plus">Nuevo</a></li>
+			<li><a href="#dashBoard" data-rel="page" data-icon="grid">Lista</a></li>
+			<li><a href="javascript:;" data-icon="delete" id="btnSalir">Salir</a></li>
+		</ul>
+	</div>
+	<div data-role="content">
+		<div id="dataRow">
+			<p class="fecha"><b>Fecha: </b><span></span></p>
+			<p class="CodBloque"><b>Bloque: </b><span></span></p>
+			<p class="CodLote"><b>Lote: </b><span></span></p>
+			<p class="LINEA"><b>Linea: </b><span></span></p>
+			<p class="PALMAS"><b>Palmas: </b><span></span></p>
+			<p class="CodigoPlaga"><b>Plaga: </b><span></span></p>
+			<p class="IdPres"><b>Presentación: </b><span></span></p>
+			<p class="cantidad"><b>Cantidad: </b><span></span></p>
+		</div>
+	</div>
 </div>
 <div data-role="page" id="addRow">
 	<div data-role="navbar" data-iconpos="left">
 		<ul>
-			<li><a href="" data-rel="page" data-icon="check">Guardar</a></li>
-			<li><a href="" data-rel="page" data-icon="action">Adicionar</a></li>
+			<li><a href="javascript:;" id="btnGuardar" data-rel="page" data-icon="check">Guardar</a></li>
+			<li><a href="javascript:;" data-rel="page" data-icon="action">Adicionar</a></li>
 			<li><a href="#dashBoard" data-rel="page" data-icon="grid">Lista</a></li>
 		</ul>
 	</div>
@@ -60,12 +85,12 @@
 				<label for="name">Fecha:</label>
 				<div class="ui-block-a">
 					<div data-role="fieldcontain">
-						<input type="date" name="fecha" placeholder="Fecha"  required>
+						<input type="date" name="fecha" id="fecha" placeholder="Fecha"  required>
 					</div>
 				</div>
 				<div class="ui-block-b">
 					<div data-role="fieldcontain">
-						<input type="time" name="hora" placeholder="Hora"  required>
+						<input type="time" name="hora" id="hora" placeholder="Hora"  required>
 					</div>
 				</div>
 			</div>
@@ -85,7 +110,7 @@
 				<select name="CodigoPlaga" id="CodigoPlaga"></select>
 			</div>
 			<div data-role="fieldcontain">
-				<select name="presentacion" id="Presentacion">
+				<select name="presentacion" id="IdPres">
 					<option value="">Presentacion</option>
 				</select>
 			</div>

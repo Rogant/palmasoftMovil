@@ -83,13 +83,51 @@ function onDeviceReady(){
 				tx.executeSql('INSERT INTO TblLINEAS(LINEA, CodLote, CodBloque, PALMAS) VALUES(6, "1","105",23)');
 
 				tx.executeSql('DROP TABLE IF EXISTS TblRowData');
-				tx.executeSql('CREATE TABLE TblRowData(`Id` INTEGER NOT NULL PRIMARY KEY, `fecha` DATETIME NOT NULL, `CodBloque` varchar(5) NOT NULL, `CodLote` varchar(3) NOT NULL, `LINEA` INT NOT NULL, `PALMAS` INT NOT NULL, `CodigoPlaga` INT NOT NULL, `cantidad` INT NOT NULL)');
+				tx.executeSql('CREATE TABLE TblRowData(`Id` INTEGER NOT NULL PRIMARY KEY, `fecha` DATETIME NOT NULL, `CodBloque` varchar(5) NOT NULL, `CodLote` varchar(3) NOT NULL, `LINEA` INT NOT NULL, `PALMAS` INT NOT NULL, `CodigoPlaga` INT NOT NULL, `IdPres` INT NOT NULL, `cantidad` INT NOT NULL)');
 			}, function(e) {
 				alert("ERROR: " + e.message);
 			});
 		}
 	});
 
+	function renderDashboard(){
+		var rows = [];
+		db.transaction(function(tx){
+			tx.executeSql("SELECT * FROM TblRowData;", [], function(tx, res) {
+				for(var i=0; i<res.rows.length; i++){
+					var fecha = new Date(res.rows.item(i).fecha);
+					rows.push("<li id='" + res.rows.item(i).Id + "'><a href='javasript:;'><p>Bloque: " + res.rows.item(i).CodBloque + " Fecha: "+fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+fecha.getFullYear()+" "+fecha.getHours()+":"+fecha.getMinutes()+"</p></a></li>");
+				}
+
+				$('#rowList').html(rows);
+
+				$('#rowList li').click(function(){
+					renderRowDetail($(this).attr('id'));
+				});
+
+				$('#rowList').listview('refresh');
+			});		
+		});
+	}
+
+	function renderRowDetail(Id){
+		db.transaction(function(tx){
+			tx.executeSql("SELECT r.fecha, r.CodBloque, r.CodLote, r.LINEA, r.PALMAS, r.cantidad, pl.Nombre AS plagas, pr.Presentacion FROM TblRowData AS r, TblPlagas AS pl, TblPlagasPresentacion AS pr WHERE r.Id ="+Id+" AND r.CodigoPlaga = pl.Codigo AND r.IdPres = pr.IdPres", [], function(tx, res) {
+				var fecha = new Date(res.rows.item(0).fecha);
+
+				$('#dataRow .fecha span').html(fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+fecha.getFullYear()+" "+fecha.getHours()+":"+fecha.getMinutes());
+				$('#dataRow .CodBloque span').html(res.rows.item(0).CodBloque);
+				$('#dataRow .CodLote span').html(res.rows.item(0).CodLote);
+				$('#dataRow .LINEA span').html(res.rows.item(0).LINEA);
+				$('#dataRow .PALMAS span').html(res.rows.item(0).PALMAS);
+				$('#dataRow .CodigoPlaga span').html(res.rows.item(0).plagas);
+				$('#dataRow .IdPres span').html(res.rows.item(0).Presentacion);
+				$('#dataRow .cantidad span').html(res.rows.item(0).cantidad);
+
+				$.mobile.changePage('#rowDetail');
+			});
+		});
+	}
 
 	function renderAddRow(){
 		db.transaction(function(tx){
@@ -112,21 +150,24 @@ function onDeviceReady(){
 
 
 	function insertNewRow(){
-		db.transaction(function(tx){
-			tx.executeSql("SELECT CodBloque, Nombre FROM TblBLOQUES;", [], function(tx, res) {
+		var fecha = new Date($('#fecha').val()+'T'+$('#hora').val());
 
+		db.transaction(function(tx){
+			tx.executeSql('INSERT INTO TblRowData(fecha, CodBloque, CodLote, LINEA, PALMAS, CodigoPlaga, IdPres, Cantidad) VALUES("'+fecha+'", "'+$('#CodBloque').val()+'", "'+$('#CodLote').val()+'", "'+$('#LINEA').val()+'", "'+$('#PALMAS').val()+'", "'+$('#CodigoPlaga').val()+'", "'+$('#IdPres').val()+'", "'+$('#Cantidad').val()+'")', [], function(tx, res) {
+				renderDashboard();
+				$.mobile.changePage('#dashBoard');
+				$('#formAddRow').trigger("reset");
 			});		
-		}, function(e) {
-			console.log("ERROR: " + e.message);
-		});	
+		});
 	}
 
 
 	$(document).ready(function(){
+		renderDashboard();
 		renderAddRow();
 
 		db.transaction(function(tx) {
-			tx.executeSql('INSERT INTO TblLINEAS() VALUES()', [], function(tx, res) {
+			tx.executeSql("SELECT * FROM sesiones WHERE activo = 1;", [], function(tx, res) {
 				if(res.rows.length > 0){
 					$.mobile.navigate('#dashBoard');
 				}
@@ -145,8 +186,6 @@ function onDeviceReady(){
 							for(var i=0; i<res.rows.length; i++){
 								lotes[i] = res.rows.item(i).CodLote;
 							}
-						}, function(e) {
-							alert("ERROR: " + e.message);
 						});
 					});
 
@@ -169,8 +208,6 @@ function onDeviceReady(){
 						for(var i=0; i<res.rows.length; i++){
 							lienas[i] = res.rows.item(i);
 						}
-					}, function(e) {
-						alert("ERROR: " + e.message);
 					});
 				});
 			}
@@ -217,6 +254,10 @@ function onDeviceReady(){
 			}
 		});
 
+		$('#btnGuardar').click(function(){
+			$('#formAddRow').submit();
+		});
+
 		$('#btnSalir').click(function(){
 			db.transaction(function(tx) {
 				tx.executeSql("UPDATE sesiones SET finSesion = datetime('now'), activo = 0 WHERE activo = 1;", [], function(tx, res) {
@@ -250,11 +291,11 @@ function onDeviceReady(){
 							optStr += '<option value="'+res.rows.item(i).IdPres+'">'+res.rows.item(i).Presentacion+'</option>';
 						}
 
-						$('#Presentacion').html(optStr);
+						$('#IdPres').html(optStr);
 					});
 				});
 			}else{
-				$('#Presentacion').html('<option value="">Presentacion</option>');
+				$('#IdPres').html('<option value="">Presentacion</option>');
 			}
 		});
 	});

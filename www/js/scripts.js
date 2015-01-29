@@ -102,7 +102,6 @@ function onDeviceReady(){
 				$('#rowList').html(rows);
 
 				$('#rowList li').click(function(){
-					alert($(this).attr('id'));
 					renderRowDetail($(this).attr('id'));
 				});
 
@@ -113,20 +112,20 @@ function onDeviceReady(){
 
 	function renderRowDetail(Id){
 		db.transaction(function(tx){
-			tx.executeSql("SELECT * FROM TblRowData WHERE Id ="+Id, [], function(tx, res) {
-				$('#dataRow .fecha span').html(res.rows.item(0).fecha);
+			tx.executeSql("SELECT r.fecha, r.CodBloque, r.CodLote, r.LINEA, r.PALMAS, r.cantidad, pl.Nombre AS plagas, pr.Presentacion FROM TblRowData AS r, TblPlagas AS pl, TblPlagasPresentacion AS pr WHERE r.Id ="+Id+" AND r.CodigoPlaga = pl.Codigo AND r.IdPres = pr.IdPres", [], function(tx, res) {
+				var fecha = new Date(res.rows.item(0).fecha);
+
+				$('#dataRow .fecha span').html(fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+fecha.getFullYear()+" "+fecha.getHours()+":"+fecha.getMinutes());
 				$('#dataRow .CodBloque span').html(res.rows.item(0).CodBloque);
 				$('#dataRow .CodLote span').html(res.rows.item(0).CodLote);
 				$('#dataRow .LINEA span').html(res.rows.item(0).LINEA);
 				$('#dataRow .PALMAS span').html(res.rows.item(0).PALMAS);
-				$('#dataRow .CodigoPlaga span').html(res.rows.item(0).CodigoPlaga);
-				$('#dataRow .IdPres span').html(res.rows.item(0).IdPres);
+				$('#dataRow .CodigoPlaga span').html(res.rows.item(0).plagas);
+				$('#dataRow .IdPres span').html(res.rows.item(0).Presentacion);
 				$('#dataRow .cantidad span').html(res.rows.item(0).cantidad);
 
 				$.mobile.changePage('#rowDetail');
 			});
-		}, function(e) {
-			alert("ERROR: " + e.message);
 		});
 	}
 
@@ -187,8 +186,6 @@ function onDeviceReady(){
 							for(var i=0; i<res.rows.length; i++){
 								lotes[i] = res.rows.item(i).CodLote;
 							}
-						}, function(e) {
-							alert("ERROR: " + e.message);
 						});
 					});
 
@@ -211,8 +208,6 @@ function onDeviceReady(){
 						for(var i=0; i<res.rows.length; i++){
 							lienas[i] = res.rows.item(i);
 						}
-					}, function(e) {
-						alert("ERROR: " + e.message);
 					});
 				});
 			}
