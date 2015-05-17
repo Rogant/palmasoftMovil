@@ -2,6 +2,7 @@ var bloques = new Array();
 var lotes 	= new Array();
 var lienas 	= new Array();
 var nPalmas;
+var sincRows = [];
 
 document.addEventListener('deviceready', onDeviceReady, true);
 
@@ -92,9 +93,13 @@ function onDeviceReady(){
 
 	function renderDashboard(){
 		var rows = [];
+		sincRows = [];
+
 		db.transaction(function(tx){
 			tx.executeSql("SELECT * FROM TblRowData;", [], function(tx, res) {
 				for(var i=0; i<res.rows.length; i++){
+					sincRows.push(res.rows.item(i));
+
 					var fecha = new Date(res.rows.item(i).fecha);
 					rows.push("<li id='" + res.rows.item(i).Id + "'><a href='javasript:;'><p>Bloque: " + res.rows.item(i).CodBloque + " Fecha: "+fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+fecha.getFullYear()+" "+fecha.getHours()+":"+fecha.getMinutes()+"</p></a></li>");
 				}
@@ -297,6 +302,28 @@ function onDeviceReady(){
 			}else{
 				$('#IdPres').html('<option value="">Presentacion</option>');
 			}
+		});
+
+		$('#sincBtn').click(function(){
+			$.ajax({
+				method: 'POST',
+				//url: 'http://192.168.0.15/testPalma/',
+				url: 'http://192.168.1.13:80',
+				data: {json: sincRows},
+				statusCode: {
+					404: function() {
+						alert( "page not found" );
+					}
+				},
+				success: function(data){
+					alert(JSON.stringify(data));
+				},
+				error: function(jqXHR, textStatus, errorThrown){
+					alert(JSON.stringify(jqXHR));
+					alert(JSON.stringify(textStatus));
+					alert(JSON.stringify(errorThrown));
+				}
+			});
 		});
 	});
 }

@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>257E0D56-08A1-4A60-886D-6EB1D8AC3F61</string>
 	<key>IDESourceControlProjectName</key>
-	<string>palmasoftMovil</string>
+	<string>project</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>5A400BEBF065210F5A770184BFAE6935FEEEE9B4</key>
 		<string>https://github.com/Rogant/palmasoftMovil.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>platforms/ios/palmasoftMovil.xcodeproj</string>
+	<string>platforms/ios/palmasoftMovil.xcodeproj/project.xcworkspace</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>5A400BEBF065210F5A770184BFAE6935FEEEE9B4</key>
