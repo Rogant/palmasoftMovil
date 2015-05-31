@@ -2,7 +2,7 @@ var bloques = new Array();
 var lotes 	= new Array();
 var lienas 	= new Array();
 var nPalmas;
-var sincRows = [];
+var sincRows = { data: []};
 
 document.addEventListener('deviceready', onDeviceReady, true);
 
@@ -93,12 +93,12 @@ function onDeviceReady(){
 
 	function renderDashboard(){
 		var rows = [];
-		sincRows = [];
+		sincRows.data = [];
 
 		db.transaction(function(tx){
 			tx.executeSql("SELECT * FROM TblRowData;", [], function(tx, res) {
 				for(var i=0; i<res.rows.length; i++){
-					sincRows.push(res.rows.item(i));
+					sincRows.data.push(res.rows.item(i));
 
 					var fecha = new Date(res.rows.item(i).fecha);
 					rows.push("<li id='" + res.rows.item(i).Id + "'><a href='javasript:;'><p>Bloque: " + res.rows.item(i).CodBloque + " Fecha: "+fecha.getDate()+"/"+(fecha.getMonth()+1)+"/"+fecha.getFullYear()+" "+fecha.getHours()+":"+fecha.getMinutes()+"</p></a></li>");
@@ -305,11 +305,14 @@ function onDeviceReady(){
 		});
 
 		$('#sincBtn').click(function(){
+			console.log(sincRows);
+
 			$.ajax({
-				method: 'POST',
+				method: 'GET',
 				//url: 'http://192.168.0.15/testPalma/',
-				url: 'http://192.168.1.13:80',
-				data: {json: sincRows},
+				url: 'http://rogant-001-site1.smarterasp.net/?data='+JSON.stringify(sincRows),
+				cache: false,
+				//data: {data: sincRows},
 				statusCode: {
 					404: function() {
 						alert( "page not found" );
